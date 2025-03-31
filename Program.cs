@@ -1,9 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Media;
 using System.Text;
-using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Speech.Synthesis;
+using static System.Net.Mime.MediaTypeNames;
+using System.Security.Cryptography;
+using System.Media;
+
 
 namespace ST10446572_LethaboMokaba_POE
 {
@@ -11,47 +14,123 @@ namespace ST10446572_LethaboMokaba_POE
     {
         static void Main()
         {
+            Console.OutputEncoding = Encoding.UTF8;
             // Display ASCII Art Logo
             DisplayAsciiArt();
+            WelcomeUser();            // Welcome User
+            DisplayAsciiLogo();
 
-            // Play Voice Greeting
-            // Welcome User
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Hello! What is your name? ");
+            // Welcome the user and start chat
+            WelcomeUser();
+        }
+
+        static void TypeEffect(string text, int delay = 50)
+        {
+            foreach (char c in text)
+            {
+                Console.Write(c);
+                System.Threading.Thread.Sleep(delay); // Delay for typing effect
+            }
+            Console.WriteLine();
+        }
+
+        // Method to display an ASCII logo for branding and aesthetics
+        static void DisplayAsciiLogo()
+        {
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("        .-------.  ");
+            Console.WriteLine("       |         |   Welcome to TrustBot!");
+            Console.WriteLine("       |  (^ ^)  |   Your Cybersecurity Assistant");
+            Console.WriteLine("       |    _    |  ");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("      /|_________|\\  ");
+            Console.WriteLine("     / |_________| \\  ");
+            Console.WriteLine("    /  |         |  \\  ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("       |_________|  ");
+            Console.WriteLine("          |   |     ");
+            Console.WriteLine("          |   |      ");
+            Console.WriteLine("          '-' '-'  ");
             Console.ResetColor();
-            string userName = Console.ReadLine();
 
-            Console.WriteLine($"\nWelcome, {userName}! I am your Cybersecurity Awareness Bot.\n");
 
-            // Main Chat Loop
+
+
+
+            // Speech synthesizer for voice output
+            SpeechSynthesizer synth = new SpeechSynthesizer();
+
+            //Configure the synthesizer
+            synth.Volume = 100;
+            synth.Rate = 0;
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            synth.Speak("Hello! Welcome! My name is Trust Bot, Your cyber security guardian");
+            Console.ResetColor();
+        }
+
+        // Method to ask for user's name and personalize responses
+        static void WelcomeUser()
+        {
+            Console.Write(" Please enter your name: ");
+            string userName = Console.ReadLine()?.Trim();
+
+            // If user enters nothing, assign a default name
+            if (string.IsNullOrEmpty(userName))
+            {
+                TypeEffect("I'll call you Safe Searcher!");
+                userName = "Safe Searcher";
+            }
+
+            // Personalized greeting
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            TypeEffect($"\nHello, {userName}! I am TrustBot, your cybersecurity assistant.");
+            TypeEffect("Ask me anything related to cybersecurity! I am here to practice safe browsing with you!");
+            Console.ResetColor();
+
+            // Start interactive chat
+            StartChat(userName);
+        }
+
+        // Method to handle the chatbot conversation
+        static void StartChat(string userName)
+        {
             while (true)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.Write("Ask me about cybersecurity (or type 'exit' to quit): ");
-                Console.ResetColor();
-                string userInput = Console.ReadLine().ToLower();
+                Console.Write("\n> ");
+                string input = Console.ReadLine()?.Trim().ToLower();
 
-                if (userInput == "exit")
+                // Handle empty input
+                if (string.IsNullOrEmpty(input))
                 {
-                    Console.WriteLine("Goodbye! Stay safe online.");
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    TypeEffect("Please enter something!");
+                    Console.ResetColor();
+                    continue;
+                }
+
+                // Exit condition
+                if (input == "exit" || input == "quit" || input == "stop")
+                {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    TypeEffect("Goodbye! Remember to browse safely!");
+                    Console.ResetColor();
                     break;
                 }
 
-                
+
             }
-
-
-
-
-            string audioFilePath = @"C:\Users\RC_Student_lab\OneDrive-ADvTECH-Ltd\VisualStudio\ST10446572_LethaboMokaba-POE\HumeAI_voice-preview_cyber1.wav";
-
-            PlayAudio(audioFilePath);
         }
 
-        
 
-        // ASCII Art Display
-        static void DisplayAsciiArt()
+
+
+
+
+
+
+                // ASCII Art Display
+                static void DisplayAsciiArt()
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine(@"\n  ____ Cybersecurity Awareness Bot ____\n");
