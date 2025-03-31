@@ -15,7 +15,6 @@ namespace ST10446572_LethaboMokaba_POE
             DisplayAsciiArt();
 
             // Play Voice Greeting
-            PlayVoiceGreeting();
             // Welcome User
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write("Hello! What is your name? ");
@@ -38,10 +37,18 @@ namespace ST10446572_LethaboMokaba_POE
                     break;
                 }
 
-                // Handle User Input
-                RespondToUser(userInput);
+                
             }
+
+
+
+
+            string audioFilePath = @"C:\Users\RC_Student_lab\OneDrive-ADvTECH-Ltd\VisualStudio\ST10446572_LethaboMokaba-POE\HumeAI_voice-preview_cyber1.wav";
+
+            PlayAudio(audioFilePath);
         }
+
+        
 
         // ASCII Art Display
         static void DisplayAsciiArt()
@@ -52,12 +59,15 @@ namespace ST10446572_LethaboMokaba_POE
         }
 
         // Play Pre-recorded Voice Greeting
-        static void PlayVoiceGreeting()
+        public static void PlayAudio(string filePath)
         {
             try
             {
-                SoundPlayer player = new SoundPlayer("greeting.wav"); // Ensure this file exists in the directory
+                SoundPlayer player = new SoundPlayer(filePath);
+                // Ensure this file exists in the directory
+                player.Load();
                 player.PlaySync();
+                player.Play();
             }
             catch (Exception ex)
             {
@@ -67,3 +77,4 @@ namespace ST10446572_LethaboMokaba_POE
 
 
     }
+}
