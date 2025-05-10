@@ -6,6 +6,7 @@ using System.Speech.Synthesis;
 using static System.Net.Mime.MediaTypeNames;
 using System.Security.Cryptography;
 using System.Media;
+using System.Collections.Generic;
 
 
 namespace ST10446572_LethaboMokaba_POE
@@ -73,7 +74,7 @@ namespace ST10446572_LethaboMokaba_POE
                 // play the .wav welcome audio file
                 using (SoundPlayer player = new SoundPlayer(audioFilePath))
                 {
-                    player.PlaySync(); // Waits for the file to finish playing
+                    player.PlaySync(); 
                 }
             }
             catch (Exception ex)
@@ -103,7 +104,7 @@ namespace ST10446572_LethaboMokaba_POE
             TypeEffect("Ask me anything related to cybersecurity! I am here to help you practice safe browsing with you!");
             Console.ResetColor();
 
-            // start chat
+            // start interaction between bot and user
             StartChat(userName);
         }
 
@@ -139,7 +140,7 @@ namespace ST10446572_LethaboMokaba_POE
 
 
 
-        // Bot's pre-saved responses
+        // Method with bot's pre-saved responses
         static void ProcessUserQuery(string userName, string input)
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
@@ -359,7 +360,7 @@ namespace ST10446572_LethaboMokaba_POE
             Console.ResetColor();
         }
 
-        // Helper method to check if user input contains any keywords
+        // helper method to ensure that user input contains any keywords
         static bool ContainsKeyword(string input, string keyword)
         {
             return Regex.IsMatch(input, @"\b" + Regex.Escape(keyword) + @"\b", RegexOptions.IgnoreCase);
@@ -369,13 +370,25 @@ namespace ST10446572_LethaboMokaba_POE
             foreach (char c in message)
             {
                 Console.Write(c);
-                Thread.Sleep(30); // Simulates typing effect
+                Thread.Sleep(30); // stimulates typing effect
             }
             Console.WriteLine();
         }
 
-            
+        static Dictionary<string, string> userMemory = new Dictionary<string, string>();
+
+        static void RememberUserInput(string input)
+        {
+            if (input.Contains("I like"))
+            {
+                string topic = input.Substring(input.IndexOf("I like") + 6);
+                userMemory["favoriteTopic"] = topic;
+                TypeEffect($"Got it! I'll remember that you're interested in {topic}.");
+            }
+        }
+
+
 
     }
-        }
+}
 
