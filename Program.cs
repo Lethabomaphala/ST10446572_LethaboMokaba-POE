@@ -13,6 +13,58 @@ namespace ST10446572_LethaboMokaba_POE
 {
     class CyberSecurityChatbot
     {
+
+        // Arrays for random responses
+        private static readonly string[] passwordTips = {
+            "Make sure to use strong, unique passwords for each account. Avoid using personal details in your passwords.",
+            "Consider using a passphrase instead of a password - something like 'PurpleTurtleJumpedHigh!' is both strong and memorable.",
+            "A good password should be at least 12 characters long and include a mix of uppercase, lowercase, numbers, and symbols.",
+            "Never reuse passwords across different accounts. If one gets compromised, they all become vulnerable."
+        };
+
+        private static readonly string[] scamTips = {
+            "Be wary of unsolicited calls or messages asking for personal information. Legitimate organizations won't ask for sensitive data this way.",
+            "If an offer seems too good to be true, it probably is. Scammers often use unrealistic promises to lure victims.",
+            "Check for poor grammar and spelling in messages - these are often signs of a scam attempt.",
+            "Scammers often create a sense of urgency. Take your time to verify any requests for money or information."
+        };
+
+        private static readonly string[] privacyTips = {
+            "Regularly review privacy settings on your social media accounts and apps to control what information you share.",
+            "Be cautious about what personal information you post online - it can be used for identity theft or social engineering attacks.",
+            "Consider using a VPN when connecting to public Wi-Fi networks to protect your online privacy.",
+            "Use private browsing modes or search engines that don't track your activity if you're concerned about privacy."
+        };
+
+        private static readonly string[] phishingTips = {
+            "Be cautious of emails asking for personal information. Scammers often disguise themselves as trusted organizations.",
+            "Hover over links before clicking to see the actual URL. Phishing sites often use slight misspellings of legitimate addresses.",
+            "Look for poor grammar and formatting in emails - these are common signs of phishing attempts.",
+            "Never enter login credentials on a site you reached through an email link. Always navigate directly to the official website."
+        };
+
+        private static readonly string[] greetings = {
+            "I'm doing great! Ready to help with all your cybersecurity questions!",
+            "Feeling secure and ready to protect you from online threats!",
+            "My day is going well! How about yours?",
+            "I'm functioning at optimal security levels! How can I assist you?",
+            "Everything's running smoothly in my digital world! What's on your mind?"
+        };
+
+
+
+        private static readonly string[] pharmingTips = {
+            "Pharming redirects you to fake websites even when you type the correct address. Always check for HTTPS and the padlock icon.",
+            "To prevent pharming attacks, keep your router firmware updated and use trusted DNS servers like Google (8.8.8.8) or Cloudflare (1.1.1.1).",
+            "Pharming attacks often target financial websites. Bookmark your bank's real website and only use that link to access it.",
+            "Install security software that can detect and block pharming attempts before they redirect you to malicious sites."
+        };
+
+
+        // User memory storage
+        private static Dictionary<string, string> userMemory = new Dictionary<string, string>();
+        private static string currentTopic = "";
+
         static void Main()
         {
             Console.OutputEncoding = Encoding.UTF8;
@@ -53,11 +105,11 @@ namespace ST10446572_LethaboMokaba_POE
 
 ";
 
-           
+
             Console.WriteLine(asciiArt);
             Console.ResetColor();
 
-        
+
 
 
         }
@@ -74,14 +126,14 @@ namespace ST10446572_LethaboMokaba_POE
                 // play the .wav welcome audio file
                 using (SoundPlayer player = new SoundPlayer(audioFilePath))
                 {
-                    player.PlaySync(); 
+                    player.PlaySync();
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error playing audio: " + ex.Message);
             }
-            
+
 
         }
 
@@ -106,10 +158,13 @@ namespace ST10446572_LethaboMokaba_POE
 
             // start interaction between bot and user
             StartChat(userName);
+
         }
 
         static void StartChat(string userName)
         {
+
+
             while (true)
             {
                 Console.Write("\n> ");
@@ -134,8 +189,15 @@ namespace ST10446572_LethaboMokaba_POE
                 ProcessUserQuery(userName, input);
 
 
+
+
+
             }
+
+
         }
+
+
 
 
 
@@ -143,24 +205,61 @@ namespace ST10446572_LethaboMokaba_POE
         // Method with bot's pre-saved responses
         static void ProcessUserQuery(string userName, string input)
         {
-            Console.ForegroundColor = ConsoleColor.Magenta;
 
-            if (ContainsKeyword(input, "cybersecurity"))
+            // Check for general conversation first
+            if (ProcessGeneralConversation(input, userName))
+                return;
+
+            // Enhanced keyword recognition
+            if (ContainsKeyword(input, "password") || ContainsKeyword(input, "passwords"))
             {
+                currentTopic = "password";
+                var random = new Random();
+                string response = passwordTips[random.Next(passwordTips.Length)];
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                TypeEffect(response);
+                AskFollowUp("Would you like more password tips?");
+            }
+            else if (ContainsKeyword(input, "scam") || ContainsKeyword(input, "scams"))
+            {
+                currentTopic = "scam";
+                var random = new Random();
+                string response = scamTips[random.Next(scamTips.Length)];
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                TypeEffect(response);
+                AskFollowUp("Should I tell you more about spotting scams?");
+            }
+            else if (ContainsKeyword(input, "privacy") || ContainsKeyword(input, "private"))
+            {
+                currentTopic = "privacy";
+                var random = new Random();
+                string response = privacyTips[random.Next(privacyTips.Length)];
+                Console.ForegroundColor = ConsoleColor.Blue;
+                TypeEffect(response);
+                AskFollowUp("Want to learn more about protecting your privacy online?");
+            }
+            else if (ContainsKeyword(input, "phishing"))
+            {
+                currentTopic = "phishing";
+                var random = new Random();
+                string response = phishingTips[random.Next(phishingTips.Length)];
+                Console.ForegroundColor = ConsoleColor.Green;
+                TypeEffect(response);
+                AskFollowUp("Would you like another phishing prevention tip?");
+            }
+            else if (ContainsKeyword(input, "cybersecurity"))
+            {
+
+                Console.ForegroundColor = ConsoleColor.Magenta;
+
+
                 TypeEffect("Cybersecurity involves the practices, technologies, and processes designed " +
                     "to protect computers, networks, programs, and data from digital attacks, theft, " +
                     "damage, or unauthorized access. These measures are vital for securing sensitive " +
                     "information, ensuring privacy, and maintaining the integrity of systems in the " +
                     "face of increasing threats from cybercriminals and hackers.");
             }
-            else if (ContainsKeyword(input, "password"))
-            {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                TypeEffect("A passwword is a sequence of letter, numbers and symbols used to confirm identity " +
-                    " or grant access. A strong password is essential for security! Use a mix of Uppercase letters (A-Z), " +
-                    "lowercase letters(a - z), numbers(0 - 9),symbols(!, @, #, etc.) Consider having 12 + characters" +
-                    "for your passwords. Use unique passwords for each account\r\n");
-            }
+
             else if (ContainsKeyword(input, "malware"))
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
@@ -170,194 +269,144 @@ namespace ST10446572_LethaboMokaba_POE
                     "and keeping it updated; be cautious with downloads and email attachments and avoid suspicious links" +
                     "and websites.");
             }
-            else if (ContainsKeyword(input, "worm"))
+
+            else if (ContainsKeyword(input, "pharming") || ContainsKeyword(input, "dns poisoning") || ContainsKeyword(input, "website redirect"))
             {
+                currentTopic = "pharming";
+                var random = new Random();
+                string response = pharmingTips[random.Next(pharmingTips.Length)];
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
-                TypeEffect("A computer worm is a type of malware that spreads on its own, usually through networks." +
-                    " It can replicate and cause harm without needing to attach to a program or file. Key Features of a" +
-                    "worm are: Self - replicating\r\n- Exploits vulnerabilities\r\n- Can cause damage\r\n- May carry " +
-                    "other malware" +
-
-                    " You can Remove a Worm by disconnecting from the internet or using an antivirus software");
+                TypeEffect(response);
+                AskFollowUp("Should I explain more about pharming protection?");
             }
-            else if (ContainsKeyword(input, "ransomware"))
-            {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                TypeEffect("Ransomware is a serious threat, but proactive measures can reduce the risk:\r\n\r\n" +
-                    "- Back up your data\r\n" +
-                    "- Keep software up-to-date\r\n" +
-                    "- Avoid suspicious links\r\n\r\n" +
-
-                    "What to Do If You're Attacked:\r\n\r\n" +
-                    "- Don't pay the ransom\r\n" +
-                    "- Use backups and tools to recover files safely");
-
-            }
-            else if (ContainsKeyword(input, "firewall"))
-            {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                TypeEffect("A firewall is like a digital bouncer! It monitors and controls incoming " +
-                    "and outgoing network traffic, keeping the bad guys out. A firewall acts as a barrier between" +
-                    " trusted networks(like your home network) and untrusted ones(like the internet).It helps" +
-                    " prevent unauthorized access, keeping your devices and data safe. A firewall's key functions are:" +
-                    "blocking malicious traffic, preventing unauthorized access and protecting yur device and data");
-            }
-            else if (ContainsKeyword(input, "encryption"))
-            {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                TypeEffect("Encryption is like sending a secret message! It converts your data into a code," +
-                    " so only authorized people can read it. Encryption scrambles your data, making it unreadable " +
-                    "to anyone without the decryption key.Even if someone intercepts your data, they won't be" +
-                    " able to access it without the key! Benefits of encryption are that it protects sensitive data," +
-                    "it prevents unauthorized access and it ensured confidentiality and privacy.");
 
 
-            }
-            else if (ContainsKeyword(input, "social engineering"))
-            {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                TypeEffect("Social engineering is when scammers manipulate you into sharing sensitive " +
-                    "info by pretending to be someone trustworthy." +
-
-                    "How Does it Work ?" +
-                    "Scammers might call, email, or message you, claiming to be from a bank, government agency, or other legit" +
-                    " organization.They'll try to trick you into revealing confidential info like passwords, credit card numbers, " +
-                    "or personal data." +
-                    "Be cautious of unsolicited requests for sensitive data" +
-                    "Verify the identity of the person or organization requesting info" +
-                    "Never share confidential info via email, text, or phone" +
-                    "Keep your personal data private!");
-            }
-            else if (ContainsKeyword(input, "two-factor authentication"))
-            {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                TypeEffect("2FA is a security process that requires two pieces of information to " +
-                    "verify your identity: 1.Your password" +
-                    "2.A second factor, like: a code sent to your phone, a fingerprint scan or face recognition scan" +
-
-                "How Does 2FA Work ? When you try to log in to an account with 2FA enabled:" +
-
-        "1.You enter your password" +
-       "2.You receive a code or prompt for the second factor" +
-        "3.You enter the code or complete the second factor authentication" +
-
-"The key benefits of 2FA are: adds an extra layer of security; protects your account from unauthorized access;" +
-"and it reduces the risk of phishing and password cracking");
-            }
-            else if (ContainsKeyword(input, "antivirus"))
-            {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                TypeEffect("Antivirus software is a program that detects, prevents, and removes malware" +
-                    " from computers, devices, and networks. It protects against various threats, including " +
-                    "" +
-                    "viruses, worms, trojans, ransomware, and spyware.\r\n\r\n" +
-                    "How Antivirus Software Works:\r\n\r\n" +
-                    "- Real-time protection: Scans files and programs for malicious activity and blocks" +
-                    " suspicious behavior immediately.\r\n\r\nKey Features to Look for:\r\n\r\n" +
-                    "- Real-time protection\r\n" +
-                    "- Automatic updates\r\n- Quarantine for suspicious files\r\n" +
-                    "- Firewall integration\r\n" +
-                    "- Web protection\r\n" +
-                    "- Anti-phishing\r\n");
-            }
-            else if (ContainsKeyword(input, "trojan"))
-            {
-                TypeEffect("A Trojan is a type of malware that disguises itself as a legitimate program or file, tricking " +
-                    "users into downloading and executing it.\r\n\r\nHow Trojans Work:\r\n\r\n" +
-                    "- Appear as useful programs, email attachments, or links\r\n" +
-                    "- Deceive users into installing them through social engineering\r\n" +
-                    "- Carry out malicious activities once activated, such as:\r\n\r\n    " +
-                    "• Stealing data\r\n    • Creating backdoors for hackers\r\n   " +
-                    "• Damaging systems\r\n\r\n" +
-                    "Key Difference:\r\n\r\nUnlike viruses or worms, Trojans don't replicate themselves." +
-                    " Instead, they rely on deceiving users to install them.");
-            }
-            else if (ContainsKeyword(input, "spyware"))
-            {
-                TypeEffect("Spyware is a type of malware that secretly collects personal info, browsing" +
-                    " history, and online activity without your consent.\r\n\r\n" +
-                    "How Spyware Works:\r\n\r\n" +
-                    "1. Installation: Spyware installs through malicious websites, downloads, email " +
-                    "attachments, or infected ads.\r\n2. Data Collection: Spyware tracks:\r\n\r\n   " +
-                    "• Keystrokes (passwords, credit card numbers)\r\n    " +
-                    "• Browser history\r\n    " +
-                    "• Personal files\r\n    " +
-                    "• Login credentials\r\n    " +
-                    "• System information\r\n\r\nKey Difference:\r\n\r\n" +
-                    "Unlike viruses or worms, spyware's main goal is to gather and transmit data without" +
-                    " your knowledge or consent.");
-            }
-            else if (ContainsKeyword(input, "how are you"))
-            {
-                Console.ForegroundColor = ConsoleColor.Blue;
-                TypeEffect("I'm doing great! How can I assist you with your cybersecurity questions?");
-            }
-            else if (ContainsKeyword(input, "purpose"))
-            {
-                Console.WriteLine("My purpose is to educate and guide you on staying safe online, helping you understand" +
-                    " important cybersecurity concepts like phishing, malware, encryption, and more.");
-            }
-            else if (ContainsKeyword(input, "ask"))
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                TypeEffect("You can ask me about anything related to cybersecurity, including phishing," +
-                    " password safety, firewalls, malware, encryption, social engineering, and more! Ask me how you can stay" +
-                    "safe on the inernet");
-            }
-            else if (ContainsKeyword(input, "pharming"))
-            {
-                Console.ForegroundColor = ConsoleColor.White;
-                TypeEffect("Pharming is a sneaky cyberattack that redirects you from real websites to " +
-                    "fake ones, stealing your sensitive data without you even realizing it!\r\n\r\n" +
-                    "How Does it Work?\r\n\r\n" +
-                    "Pharming manipulates DNS settings or exploits vulnerabilities, all without needing " +
-                    "your interaction.\r\n\r\n" +
-                    "Stay Safe with These Tips:\r\n\r\n" +
-                    "✔ Stick to secure websites (look for HTTPS & the padlock icon)" +
-                    "" +
-                    "\r\n✔ Enable Multi-Factor Authentication (MFA) for extra security\r\n" +
-                    "✔ Keep your software up-to-date\r\n" +
-                    "✔ Use trusted DNS services (like Google or Cloudflare)\r\n" +
-                    "✔ Install antivirus and anti-malware software\r\n");
-            }
-            else if (ContainsKeyword(input, "cyber attack"))
-            {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                TypeEffect("A cyber attack is when hackers try to harm or access your computer, " +
-                    "network, or data without permission. This can happen to anyone - individuals, " +
-                    "businesses, or governments.\r\n\r\nWhy Do Hackers Launch Cyber Attacks?\r\n\r\n" +
-                    "Hackers may attack for various reasons:\r\n\r\n" +
-                    "Financial gain (stealing money or sensitive info)\r\n" +
-                    "Espionage (spying or stealing secrets)\r\n" +
-                    "Sabotage (disrupting or destroying systems)\r\n\r\n");
-            }
-            else if (ContainsKeyword(input, "virus"))
-            {
-                Console.ForegroundColor = ConsoleColor.DarkBlue;
-                TypeEffect("A computer virus is a type of malware that can harm your device, steal data," +
-                    " and slow down performance. Viruses spread through infected emails, downloads, " +
-                    "and removable devices.\r\n\r\nPrevention is Key.\r\n\r\nTo keep your device safe:\r\n\r\n" +
-                    "✅ Install and update antivirus software\r\n" +
-                    "✅ Keep your software up-to-date\r\n" +
-                    "✅ Avoid suspicious links and downloads\r\n" +
-                    "✅ Enable firewall protection\r\n" +
-                    "✅ Use strong passwords and multi-factor authentication\r\n" +
-                    "✅ Be cautious with removable media\r\n" +
-                    "✅ Backup important data regularly\r\n\r\n" +
-                    "Removing a computer virus:\r\n\r\nIf you're infected:\r\n\r\n" +
-                    "✅ Run a full system scan with antivirus software\r\n" +
-                    "✅ Boot in safe mode\r\n" +
-                    "✅ Delete suspicious files or applications\r\n" +
-                    "✅ Use system restore\r\n" +
-                    "✅ Reinstall your operating system (if necessary)\r\n\r\n");
-            }
-            else
             {
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 TypeEffect("I don't have the answer for that YET :( but you can ask me something else " +
                     "about cyber security! :)");
+                Console.ResetColor();
+
             }
+
+            RememberUserPreferences(input);
+        }
+
+        static bool ProcessGreetings(string input, string userName)
+        {
+            if (ContainsKeyword(input, "hello") || ContainsKeyword(input, "hi") || ContainsKeyword(input, "hey"))
+            {
+                var random = new Random();
+                string greeting = greetings[random.Next(greetings.Length)];
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                TypeEffect($"{greeting} What cybersecurity topic can I help with today, {userName}?");
+                return true;
+            }
+            else if (ContainsKeyword(input, "how are you") || ContainsKeyword(input, "how you feeling") || ContainsKeyword(input, "how's your day"))
+            {
+                var random = new Random();
+                string response = greetings[random.Next(greetings.Length)];
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                TypeEffect(response);
+                return true;
+            }
+            return false;
+        }
+
+
+        static bool ProcessGeneralConversation(string input, string userName)
+        {
+            if (input.Contains("thank") || input.Contains("thanks"))
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                TypeEffect($"You're welcome, {userName}! Stay safe online!");
+                return true;
+            }
+            else if (input.Contains("hi") || input.Contains("hello") || input.Contains("hey"))
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                TypeEffect($"Hello again, {userName}! What cybersecurity topic can I help with today?");
+                return true;
+            }
+            else if (input.Contains("yes") && !string.IsNullOrEmpty(currentTopic))
+            {
+                ContinueTopic(currentTopic);
+                return true;
+            }
+            else if (input.Contains("no") && !string.IsNullOrEmpty(currentTopic))
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                TypeEffect("No problem! What else would you like to know about?");
+                currentTopic = "";
+                return true;
+            }
+            return false;
+        }
+
+        static void ContinueTopic(string topic)
+        {
+            var random = new Random();
+            string response = "";
+
+            switch (topic)
+            {
+                case "password":
+                    response = passwordTips[random.Next(passwordTips.Length)];
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    break;
+                case "scam":
+                    response = scamTips[random.Next(scamTips.Length)];
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case "privacy":
+                    response = privacyTips[random.Next(privacyTips.Length)];
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    break;
+                case "phishing":
+                    response = phishingTips[random.Next(phishingTips.Length)];
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    break;
+                case "pharming":
+                    response = pharmingTips[random.Next(pharmingTips.Length)];
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    break;
+            }
+
+            TypeEffect(response);
+            AskFollowUp($"Would you like another {topic} tip?");
+        }
+
+        static void AskFollowUp(string question)
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+            TypeEffect(question + " (yes/no)");
             Console.ResetColor();
+        }
+
+        static void RememberUserPreferences(string input)
+        {
+            if (input.Contains("like") || input.Contains("love") || input.Contains("interested"))
+            {
+                if (input.Contains("password"))
+                {
+                    userMemory["favoriteTopic"] = "password security";
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    TypeEffect("I'll remember you're interested in password security. It's a crucial topic!");
+                }
+                else if (input.Contains("privacy"))
+                {
+                    userMemory["favoriteTopic"] = "online privacy";
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    TypeEffect("Noted! You care about online privacy - a smart choice in today's digital world!");
+                }
+                else if (input.Contains("scam") || input.Contains("phishing"))
+                {
+                    userMemory["favoriteTopic"] = "avoiding scams";
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    TypeEffect("I see you're concerned about scams. That's very wise in today's online environment!");
+                }
+                Console.ResetColor();
+            }
         }
 
         // helper method to ensure that user input contains any keywords
@@ -375,20 +424,11 @@ namespace ST10446572_LethaboMokaba_POE
             Console.WriteLine();
         }
 
-        static Dictionary<string, string> userMemory = new Dictionary<string, string>();
-
-        static void RememberUserInput(string input)
-        {
-            if (input.Contains("I like"))
-            {
-                string topic = input.Substring(input.IndexOf("I like") + 6);
-                userMemory["favoriteTopic"] = topic;
-                TypeEffect($"Got it! I'll remember that you're interested in {topic}.");
-            }
-        }
-
-
-
     }
+
+
+
+
 }
+
 
